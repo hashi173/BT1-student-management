@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Thông Tin Sinh Viên</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 Quản Lý Thông Tin Sinh Viên</h1>
+            <p class="subtitle">Hệ thống nhập và quản lý danh sách sinh viên</p>
+        </header>
+
+        <!-- Form nhập thông tin sinh viên -->
+        <section class="form-section">
+            <h2>📝 Thông Tin Sinh Viên</h2>
+            <form id="studentForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="studentId">Mã Sinh Viên <span class="required">*</span></label>
+                        <input type="text" id="studentId" placeholder="VD: SV001" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fullName">Họ và Tên <span class="required">*</span></label>
+                        <input type="text" id="fullName" placeholder="VD: Nguyễn Văn A" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="birthDate">Ngày Sinh <span class="required">*</span></label>
+                        <input type="date" id="birthDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="className">Lớp Học <span class="required">*</span></label>
+                        <input type="text" id="className" placeholder="VD: CNTT-K65" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="gpa">Điểm GPA <span class="required">*</span></label>
+                        <input type="number" id="gpa" step="0.01" min="0" max="4" placeholder="VD: 3.50" required>
+                    </div>
+                    <div class="form-group btn-group">
+                        <button type="submit" class="btn btn-primary" id="submitBtn">
+                            <span class="btn-icon">➕</span> Thêm Sinh Viên
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="cancelBtn" style="display: none;">
+                            <span class="btn-icon">❌</span> Hủy
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <!-- Thống kê -->
+        <section class="stats-section">
+            <div class="stat-card">
+                <div class="stat-icon">👨‍🎓</div>
+                <div class="stat-info">
+                    <span class="stat-number" id="totalStudents">0</span>
+                    <span class="stat-label">Tổng Sinh Viên</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-info">
+                    <span class="stat-number" id="avgGpa">0.00</span>
+                    <span class="stat-label">GPA Trung Bình</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🏆</div>
+                <div class="stat-info">
+                    <span class="stat-number" id="excellentCount">0</span>
+                    <span class="stat-label">Xuất Sắc (GPA ≥ 3.6)</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tìm kiếm và lọc -->
+        <section class="search-section">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="🔍 Tìm kiếm theo mã SV, họ tên, lớp...">
+            </div>
+            <div class="filter-box">
+                <select id="filterGpa">
+                    <option value="all">Tất cả GPA</option>
+                    <option value="excellent">Xuất sắc (≥ 3.6)</option>
+                    <option value="good">Giỏi (3.2 - 3.59)</option>
+                    <option value="average">Khá (2.5 - 3.19)</option>
+                    <option value="below">Trung bình (< 2.5)</option>
+                </select>
+            </div>
+        </section>
+
+        <!-- Danh sách sinh viên -->
+        <section class="table-section">
+            <h2>📋 Danh Sách Sinh Viên</h2>
+            <div class="table-container">
+                <table id="studentTable">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Mã SV</th>
+                            <th>Họ và Tên</th>
+                            <th>Ngày Sinh</th>
+                            <th>Lớp Học</th>
+                            <th>GPA</th>
+                            <th>Xếp Loại</th>
+                            <th>Thao Tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentTableBody">
+                        <!-- Dữ liệu sinh viên sẽ được render ở đây -->
+                    </tbody>
+                </table>
+                <div class="empty-state" id="emptyState">
+                    <div class="empty-icon">📭</div>
+                    <p>Chưa có sinh viên nào trong danh sách</p>
+                    <span>Hãy thêm sinh viên mới bằng form ở trên</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <p>© 2026 Student Management System | Được tạo bằng HTML + JavaScript</p>
+        </footer>
+    </div>
+
+    <!-- Modal xác nhận xóa -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal">
+            <div class="modal-icon">⚠️</div>
+            <h3>Xác Nhận Xóa</h3>
+            <p>Bạn có chắc chắn muốn xóa sinh viên <strong id="deleteStudentName"></strong>?</p>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="cancelDelete">Hủy</button>
+                <button class="btn btn-danger" id="confirmDelete">Xóa</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast notification -->
+    <div class="toast" id="toast">
+        <span class="toast-icon"></span>
+        <span class="toast-message"></span>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
