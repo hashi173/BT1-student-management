@@ -100,7 +100,6 @@ class QuanLySinhVien {
 
     // Thêm sinh viên
     themSinhVien(sinhVien) {
-        // Kiểm tra mã SV đã tồn tại
         if (this.timTheoMa(sinhVien.maSV)) {
             return { success: false, message: 'Mã sinh viên đã tồn tại!' };
         }
@@ -224,7 +223,7 @@ const excellentCountEl = document.getElementById('excellentCount');
 // Submit form
 studentForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    
+
     const maSV = studentIdInput.value.trim();
     const hoTen = fullNameInput.value.trim();
     const ngaySinh = birthDateInput.value;
@@ -232,7 +231,6 @@ studentForm.addEventListener('submit', (e) => {
     const gpa = parseFloat(gpaInput.value);
 
     if (editingMaSV) {
-        // Cập nhật sinh viên
         const result = quanLy.capNhatSinhVien(editingMaSV, hoTen, ngaySinh, lopHoc, gpa);
         showToast(result.message, result.success ? 'success' : 'error');
         if (result.success) {
@@ -241,7 +239,6 @@ studentForm.addEventListener('submit', (e) => {
             updateStats();
         }
     } else {
-        // Thêm sinh viên mới
         const sinhVien = new SinhVien(maSV, hoTen, ngaySinh, lopHoc, gpa);
         const result = quanLy.themSinhVien(sinhVien);
         showToast(result.message, result.success ? 'success' : 'error');
@@ -297,12 +294,10 @@ deleteModal.addEventListener('click', (e) => {
 function renderTable(searchKeyword = '', gpaFilter = 'all') {
     let data = quanLy.danhSach;
 
-    // Apply search
     if (searchKeyword) {
         data = quanLy.timKiem(searchKeyword);
     }
 
-    // Apply filter
     if (gpaFilter !== 'all') {
         data = data.filter(sv => {
             switch (gpaFilter) {
@@ -315,7 +310,6 @@ function renderTable(searchKeyword = '', gpaFilter = 'all') {
         });
     }
 
-    // Clear table
     studentTableBody.innerHTML = '';
 
     if (data.length === 0) {
@@ -325,7 +319,6 @@ function renderTable(searchKeyword = '', gpaFilter = 'all') {
 
     emptyState.classList.remove('show');
 
-    // Render rows
     data.forEach((sv, index) => {
         const xepLoai = sv.xepLoai();
         const row = document.createElement('tr');
@@ -339,12 +332,8 @@ function renderTable(searchKeyword = '', gpaFilter = 'all') {
             <td><span class="gpa-badge ${xepLoai.class}">${xepLoai.text}</span></td>
             <td>
                 <div class="action-btns">
-                    <button class="action-btn edit-btn" onclick="editStudent('${sv.maSV}')" title="Chỉnh sửa">
-                        ✏️ Sửa
-                    </button>
-                    <button class="action-btn delete-btn" onclick="showDeleteModal('${sv.maSV}', '${sv.hoTen}')" title="Xóa">
-                        🗑️ Xóa
-                    </button>
+                    <button class="action-btn edit-btn" onclick="editStudent('${sv.maSV}')">Sửa</button>
+                    <button class="action-btn delete-btn" onclick="showDeleteModal('${sv.maSV}', '${sv.hoTen}')">Xóa</button>
                 </div>
             </td>
         `;
@@ -370,11 +359,10 @@ function editStudent(maSV) {
         birthDateInput.value = sv.ngaySinh;
         classNameInput.value = sv.lopHoc;
         gpaInput.value = sv.gpa;
-        
-        submitBtn.innerHTML = '<span class="btn-icon">💾</span> Cập Nhật';
-        cancelBtn.style.display = 'inline-flex';
-        
-        // Scroll to form
+
+        submitBtn.textContent = 'Cập Nhật';
+        cancelBtn.style.display = 'inline-block';
+
         studentForm.scrollIntoView({ behavior: 'smooth' });
     }
 }
@@ -384,7 +372,7 @@ function resetForm() {
     editingMaSV = null;
     studentForm.reset();
     studentIdInput.disabled = false;
-    submitBtn.innerHTML = '<span class="btn-icon">➕</span> Thêm Sinh Viên';
+    submitBtn.textContent = 'Thêm Sinh Viên';
     cancelBtn.style.display = 'none';
 }
 
@@ -403,17 +391,10 @@ function hideDeleteModal() {
 
 // Show toast notification
 function showToast(message, type = 'success') {
-    const icons = {
-        success: '✅',
-        error: '❌',
-        warning: '⚠️'
-    };
-    
     toast.className = `toast ${type}`;
-    toast.querySelector('.toast-icon').textContent = icons[type] || '💬';
     toast.querySelector('.toast-message').textContent = message;
     toast.classList.add('show');
-    
+
     setTimeout(() => {
         toast.classList.remove('show');
     }, 3000);
